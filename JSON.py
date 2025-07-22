@@ -2,6 +2,7 @@
 #Aarush Alajangi
 #Software Engineering Assessment task 2
 
+import json
 import os
 import datetime
 import time
@@ -307,24 +308,26 @@ def main():
                         while True:
                             try:
                                 num_pages = int(input("Number of pages:"))
-                                break
-                            except ValueError or num_pages < 1:
-                                print("Pleae enter a valid number of pages.")                            
-                        libraryitem = Book(title, author, item_id, genre, num_pages)
-                        ArdenSystem.add_item(libraryitem)
+                            except ValueError:
+                                print("Try again")                            
+                            libraryitem = Book(title, author, item_id, genre, num_pages)
+                            ArdenSystem.add_item(libraryitem)
+                            break
+                        break
                     case "magazine":
                         issue_number = int(input("Issue number: "))
                         publication_date = input("Date published (DD/MM/YYYY): ")
                         if publication_date == '':
                             publication_date = CurrentDay()
-                        while True:
-                            try:
-                                publication_date = datetime.datetime.strptime(publication_date, "%d/%m/%Y").date()
-                                break
-                            except ValueError:
-                                print("Invalid date format. Please use DD/MM/YYYY.")
+                            break
+                        try:
+                            publication_date = datetime.datetime.strptime(publication_date, "%d/%m/%Y").date()
+                            break
+                        except ValueError:
+                            print("Invalid date format. Please use DD/MM/YYYY.")
                         libraryitem = Magazine(title, author, item_id, genre, issue_number, publication_date)
                         ArdenSystem.add_item(libraryitem)
+                        break
                     case "dvd":
                         director = input("Director: ")
                         durationstr = input("Duration (HH:MM:SS): ")
