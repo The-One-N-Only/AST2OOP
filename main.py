@@ -180,6 +180,8 @@ class Magazine(LibraryItem): #Magazine item, with issue number and publication d
 
     def display_info(self):
         return super().display_info() + f"\nIssue Number: {self.issue_number}\nPublication Date: {self.publication_date}\n"
+
+
 class DVD(LibraryItem): #DVD item, with duration and director
     def __init__(self, title, author, item_id, genre, duration, director, available = True):
         super().__init__(title, item_id, genre, author, type="DVD", available=available)
@@ -322,7 +324,7 @@ def main():
             raw_id += 1
             genre = input("Genre: ")
             author = input("Author/Publisher/Producer: ")
-            while True:#
+            while True:
                 type = input("Item Type: ")
                 match type.lower():
                     case "book":

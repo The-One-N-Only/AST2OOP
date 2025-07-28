@@ -16,7 +16,7 @@
     - `LibaryItem` is a parent class that...... This has the attributes...... It has the functions... that do......
 # Child Classes
 * `Book`
-    - This does.... this inherts... etc
+    - This does.... this inherts... How is this inheritence / poly????? etc
 * `Magazine` 
     - ...
 * `DVD` 
