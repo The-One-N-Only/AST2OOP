@@ -9,15 +9,15 @@ import time
 import readchar
 from colorama import Fore, Style, init 
 import sys
-import itertools
 from colorama import Fore, Style, init
 
-def cls():
+def cls(): # Function to clear the console
     os.system('clear')
+
 def CurrentDay():
     return datetime.date.today()
 
-class LibrarySystem:
+class LibrarySystem: #Library system that manages all items in the library
     def __init__(self):
         self.items_by_title = {}
         self.items_by_ID = {}
@@ -52,37 +52,43 @@ class LibrarySystem:
         if isinstance(item, str):
             print(item)
         elif not item.is_available():
-            print(f"{Fore.RED}Item {item.title} is not available for borrowing.{Style.RESET_ALL}")
+            print(f"\n{Fore.RED}Item {item.title} is not available for borrowing.{Style.RESET_ALL}")
         else:
             item.borrow_item()
-            print(f"You have borrowed: {Fore.GREEN}{item.title}{Style.RESET_ALL}")
+            print(f"\nYou have borrowed: {Fore.GREEN}{item.title}{Style.RESET_ALL}")
             self.previousActions.append(f"Borrowed item: {item.title}")
 
     def borrow_item_by_ID(self, id):
         item = self.get_by_ID(id)
         if isinstance(item, str):
             print(item)
+        elif not item.is_available():
+            print(f"\n{Fore.RED}Item {item.title} is not available for borrowing.{Style.RESET_ALL}")
         else:
             item.borrow_item()
-            print(f"You have borrowed: {Fore.GREEN}{item.title}{Style.RESET_ALL}")
+            print(f"\nYou have borrowed: {Fore.GREEN}{item.title}{Style.RESET_ALL}")
             self.previousActions.append(f"Borrowed item: {item.title}")
     
     def return_item_by_title(self, title):
         item = self.get_by_title(title)
         if isinstance(item, str):
             print(item)
+        elif item.is_available():
+            print(f"\n{Fore.RED}Item {item.title} is already available.{Style.RESET_ALL}")
         else:
             item.return_item()
-            print(f"You have returned: {Fore.RED}{item.title}{Style.RESET_ALL}")
+            print(f"\nYou have returned: {Fore.RED}{item.title}{Style.RESET_ALL}")
             self.previousActions.append(f"Returned item: {item.title}")
         
     def return_item_by_ID(self, id):
         item = self.get_by_ID(id)
         if isinstance(item, str):
             print(item)
+        elif item.is_available():
+            print(f"\n{Fore.RED}Item {item.title} is already available.{Style.RESET_ALL}")
         else:
             item.return_item()
-            print(f"You have returned: {Fore.RED}{item.title}{Style.RESET_ALL}")
+            print(f"\nYou have returned: {Fore.RED}{item.title}{Style.RESET_ALL}")
             self.previousActions.append(f"Returned item: {item.title}")
 
     def get_all_borrowed_items(self):
@@ -123,10 +129,10 @@ class LibrarySystem:
             print(result)
         else:
             print(result.display_info())
-        
-    
 
-class LibraryItem:
+
+
+class LibraryItem: #Base class for all library items
     def __init__(self, title, item_id, genre, author, type, available = True):
         self.title = title
         self.type = type
@@ -161,13 +167,14 @@ class LibraryItem:
 
 
 
-class Book(LibraryItem):
+class Book(LibraryItem): #Book item, with number of pages
     def __init__(self, title, author, item_id, genre, num_pages, available = True):
         super().__init__(title, item_id, genre, author, type="Book", available=available)
         self.num_pages = num_pages
 
     def display_info(self):
         return super().display_info() + f"\nNumber of Pages: {self.num_pages}\n"
+
 
 
 class Magazine(LibraryItem): #Magazine item, with issue number and publication date (set to today by default)
@@ -180,6 +187,9 @@ class Magazine(LibraryItem): #Magazine item, with issue number and publication d
 
     def display_info(self):
         return super().display_info() + f"\nIssue Number: {self.issue_number}\nPublication Date: {self.publication_date}\n"
+
+
+
 class DVD(LibraryItem): #DVD item, with duration and director
     def __init__(self, title, author, item_id, genre, duration, director, available = True):
         super().__init__(title, item_id, genre, author, type="DVD", available=available)
@@ -190,6 +200,8 @@ class DVD(LibraryItem): #DVD item, with duration and director
 
     def display_info(self):
         return super().display_info() + f"\nDuration: {self.duration} seconds\nDirector: {self.director}\n"
+
+
 
 def printInLine(list, listIndex):
     max_lines = max(len(text.split('\n')) for text in list)
@@ -216,7 +228,7 @@ def Highlight(options, optionsIndex, menuTitle, previousActions = None):
             printPreviousActions(previousActions)  # Print previous actions if any
             return
         print_menuOpt()
-        print("Use the left and right arrow keys to navigate, press Enter to select an option, and press Backspace to go back.")
+        print(Fore.CYAN + "\nUse the left and right arrow keys to navigate, press Enter to select an option, and press Backspace to go back." + Style.RESET_ALL)
         return
 
 def printPreviousActions(previousActions):
@@ -225,6 +237,7 @@ def printPreviousActions(previousActions):
     print("Previous Actions:")
     for action in previousActions[-10:]:
         print(action)
+
 def rainbow_text(text, duration=5, delay=0.05):
     init(autoreset=True)
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
@@ -322,7 +335,7 @@ def main():
             raw_id += 1
             genre = input("Genre: ")
             author = input("Author/Publisher/Producer: ")
-            while True:#
+            while True:
                 type = input("Item Type: ")
                 match type.lower():
                     case "book":
@@ -343,13 +356,14 @@ def main():
                         publication_date = input("Date published (DD/MM/YYYY): ")
                         if publication_date == '':
                             publication_date = CurrentDay()
-                        while True:
-                            try:
-                                publication_date = datetime.datetime.strptime(publication_date, "%d/%m/%Y").date()
-                                break
-                            except ValueError:
-                                print("Invalid date format. Please use DD/MM/YYYY.")
-                                publication_date = input("Date published (DD/MM/YYYY): ")
+                        else:
+                            while True:
+                                try:
+                                    publication_date = datetime.strptime(publication_date, "%d/%m/%Y").date()
+                                    break
+                                except ValueError:
+                                    print("Invalid date format. Please use DD/MM/YYYY.")
+                                    publication_date = input("Date published (DD/MM/YYYY): ")
                         libraryitem = Magazine(title, author, item_id, genre, issue_number, publication_date)
                         ArdenSystem.add_item(libraryitem)
                         break
@@ -373,45 +387,42 @@ def main():
                         break
                     case _:
                         print("Invalid item type. Please try again.")
+            print(Fore.CYAN + "\nPress any key to return to the main menu.")
             readchar.readkey()  # Wait for a key press before continuing
         elif action == "b":
             match searchMenu():
                 case "t":
                     title = input("\nTitle to borrow: ")
                     ArdenSystem.borrow_item_by_title(title)
+                    print(Fore.CYAN + "\nPress any key to return to the main menu.")
                     readchar.readkey()
                 case "i":
                     try:
                         id_num = input("\nID Number: ")
                         item = ArdenSystem.get_by_ID(id_num)
                     except ValueError:
-                        print("ID must be a number.")
+                        print("ID must be a 6 digit number.")
                     ArdenSystem.borrow_item_by_ID(id_num)
+                    print(Fore.CYAN + "\nPress any key to return to the main menu.")
+                    readchar.readkey()
                 case "q":
                     continue
         elif action == "r":
             match searchMenu():
                 case "t":
                     title = input("\nTitle to return: ")
-                    item = ArdenSystem.get_by_title(title)
-                    if isinstance(item, str):
-                        print(item)
-                    else:
-                        item.return_item()
-                        print(f"You have returned {item.title}.")
+                    ArdenSystem.return_item_by_title(title)
+                    print(Fore.CYAN + "\nPress any key to return to the main menu.")
+                    readchar.readkey()
                 case "i":
                     try:
                         id_num = input("\nID Number: ")
                         item = ArdenSystem.get_by_ID(id_num)
                     except ValueError:
-                        print("ID must be a number.")
-                    item = ArdenSystem.get_by_ID(id_num)
-                    if isinstance(item, str):
-                        print(item)
-                    else:
-                        item.return_item()
-                        print(f"You have returned {item.title}.")
-                        readchar.readkey()  # Wait for a key press before continuing
+                        print("ID must be a 6 digit number.")
+                    ArdenSystem.return_item_by_ID(id_num)
+                    print(Fore.CYAN + "\nPress any key to return to the main menu.")
+                    readchar.readkey()  # Wait for a key press before continuing
                 case "q":
                     continue
         elif action == "s":
@@ -436,6 +447,7 @@ def main():
                     items = ArdenSystem.get_all_items()
                 case "q":
                     continue
+            print("")
             print(f"{'Title':<25} {'Type':<10} {'Available':<10}")
             print("-" * 50)
             for item in items:
@@ -443,7 +455,7 @@ def main():
             print(Fore.YELLOW + f"\nTotal items viewed: {len(items)}" + Style.RESET_ALL)
             if not items:
                 print("No items found.")
-            print("\nPress any key to return to the main menu.")
+            print(Fore.CYAN + "\nPress any key to return to the main menu.")
             readchar.readkey()
 
 def mainMenu(previousActions):
